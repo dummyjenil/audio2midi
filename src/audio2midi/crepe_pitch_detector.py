@@ -17,11 +17,14 @@ class PredictProgressCallback(Callback):
         self.total_batches = total_batches
         self.progress_callback = progress_callback
     def on_predict_begin(self, logs=None):
-        self.progress_callback(0,self.total_batches)
+        if self.progress_callback:
+            self.progress_callback(0,self.total_batches)
     def on_predict_batch_end(self, batch, logs=None):
-        self.progress_callback(batch,self.total_batches)
+        if self.progress_callback:
+            self.progress_callback(batch,self.total_batches)
     def on_predict_end(self, logs=None):
-        self.progress_callback(self.total_batches,self.total_batches)
+        if self.progress_callback:
+            self.progress_callback(self.total_batches,self.total_batches)
 
 
 class Crepe():

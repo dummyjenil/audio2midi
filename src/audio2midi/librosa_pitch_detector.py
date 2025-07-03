@@ -1,4 +1,3 @@
-from typing import Callable
 import librosa
 from pretty_midi_fix import Instrument , PrettyMIDI , Note
 import numpy as np

@@ -1,6 +1,6 @@
 [project]
 name = "audio2midi"
-version = "0.2.0"
+version = "0.3.0"
 description = "Audio To Midi"
 readme = "README.md"
 authors = [

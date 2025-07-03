@@ -1270,7 +1270,8 @@ class Violin_Pitch_Det(Pitch_Det):
                     value = value.view(-1, value.shape[-1])
                     value = value.detach().cpu().numpy()
                     performance[key].append(value)
-                progress_callback(i,len(frames))
+                if progress_callback:
+                    progress_callback(i,len(frames))
         performance = {key: np.concatenate(value, axis=0)[:len(times)] for key, value in performance.items()}
         performance['time'] = times
         return performance
