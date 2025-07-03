@@ -1,0 +1,23 @@
+[project]
+name = "audio2midi"
+version = "0.1.0"
+description = "Audio To Midi"
+readme = "README.md"
+authors = [
+    { name = "dummyjenil", email = "dummyjenil@gmail.com" }
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+librosa_pitch_detector = ["librosa", "numpy","pretty_midi_fix"]
+basic_pitch_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","torch","nnAudio"]
+melodia_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","vamp"]
+crepe_pitch_detector = ["librosa", "numpy","pretty_midi_fix","hmmlearn","tensorflow","keras"]
+violin_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","torchaudio","torch","mir_eval"]
+pop2piano = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","resampy","pretty_midi"]
+all = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","torchaudio","torch","mir_eval","hmmlearn","tensorflow","keras","vamp","nnAudio","resampy","pretty_midi"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
