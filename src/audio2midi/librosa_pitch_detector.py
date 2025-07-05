@@ -40,7 +40,7 @@ class Normal_Pitch_Det:
         midi_sequence = self.clean_midi_sequence(self.smooth_pitch_sequence(pitches, magnitudes,threshold),min_note_length)
         time_per_frame = audio_duration / len(midi_sequence)
         pm = PrettyMIDI(initial_tempo=tempo_bpm)
-        instrument = Instrument(program=0)  # Acoustic Grand Piano
+        instrument = Instrument(program=40)
         last_note = None
         start_time = 0
         for i, note in enumerate(midi_sequence):
@@ -135,13 +135,13 @@ class Guitar_Pitch_Det:
         # Process all segments
         notes_data = [self.estimate_segment_note(cqt_db, boundaries, i, sr, tempo_bpm, threshold_db,round_to_sixteenth) for i in range(len(boundaries) - 1)]
         pm = PrettyMIDI(initial_tempo=tempo_bpm)
-        piano = Instrument(program=40)
+        instrument = Instrument(program=40)
         note_time = 0.0
         for (pitch, duration, velocity) in notes_data:
             if pitch is not None:
                 # Convert duration in beats to duration in seconds for PrettyMIDI
                 duration_sec = duration * (60 / tempo_bpm)
-                piano.notes.append(Note(velocity, pitch, note_time, note_time + duration_sec))
+                instrument.notes.append(Note(velocity, pitch, note_time, note_time + duration_sec))
                 note_time += duration_sec # Increment note_time by duration in seconds
             else:
                 # If it's a rest, just advance the time

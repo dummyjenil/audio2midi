@@ -5,7 +5,7 @@
 ---
 
 ```bash
-pip install audio2midi[all] audio2midi[pop2piano] audio2midi[violin_pitch_detector] audio2midi[crepe_pitch_detector] audio2midi[melodia_pitch_detector] audio2midi[basic_pitch_pitch_detector] audio2midi[librosa_pitch_detector]
+pip install audio2midi[all] audio2midi[pop2piano] audio2midi[violin_pitch_detector] audio2midi[crepe_pitch_detector] audio2midi[crepe_pitch_detector_tf] audio2midi[melodia_pitch_detector] audio2midi[basic_pitch_pitch_detector] audio2midi[librosa_pitch_detector]
 ```
 ---
 
@@ -61,6 +61,7 @@ BasicPitch(device=device).predict(audio_path)
 
 ```python
 from audio2midi.basic_pitch_pitch_detector import BasicPitch
+from audio2midi.crepe_pitch_detector_tf import CrepeTF
 from audio2midi.crepe_pitch_detector import Crepe
 from audio2midi.librosa_pitch_detector import Normal_Pitch_Det , Guitar_Pitch_Det
 from audio2midi.melodia_pitch_detector import Melodia
@@ -118,7 +119,8 @@ gr.TabbedInterface([
     gr.Interface(BasicPitch(device=device).predict,[gr.Audio(type="filepath", label="Upload Audio"),gr.Number(0.5,label="onset_thresh",info="Minimum amplitude of an onset activation to be considered an onset."),gr.Number(0.3,label="frame_thresh",info="Minimum energy requirement for a frame to be considered present."),gr.Number(127.70,label="min_note_len",info="The minimum allowed note length in milliseconds."),gr.Number(120,label="midi_tempo"),gr.Checkbox(True,label="infer_onsets",info="add additional onsets when there are large differences in frame amplitudes."),gr.Checkbox(True,label="include_pitch_bends",info="include pitch bends."),gr.Checkbox(False,label="multiple_pitch_bends",info="allow overlapping notes in midi file to have pitch bends."),gr.Checkbox(True,label="melodia_trick",info="Use the melodia post-processing step.")],gr.File(label="Download Midi File")),
     gr.Interface(Violin_Pitch_Det(device=device,model_capacity=getenv("violin_model_capacity","full")).predict, [gr.Audio(label="Upload your Audio file",type="filepath"),gr.Number(32,label="Batch size"),gr.Radio(["spotify","tiktok"],value="spotify",label="Post Processing"),gr.Checkbox(True,label="include_pitch_bends")],gr.File(label="Download MIDI file")),
     gr.Interface(Crepe(getenv("crepe_model_capacity","full")).predict,[gr.Audio(type="filepath",label="Input Audio"),gr.Checkbox(False,label="viterbi",info="Apply viterbi smoothing to the estimated pitch curve"),gr.Checkbox(True,label="center"),gr.Number(10,label="step size",info="The step size in milliseconds for running pitch estimation."),gr.Number(0.8,label="minimum confidence"),gr.Number(32,label="batch size")],gr.File(label="Midi File")),
+    gr.Interface(CrepeTF(getenv("crepe_model_capacity","full")).predict,[gr.Audio(type="filepath",label="Input Audio"),gr.Checkbox(False,label="viterbi",info="Apply viterbi smoothing to the estimated pitch curve"),gr.Checkbox(True,label="center"),gr.Number(10,label="step size",info="The step size in milliseconds for running pitch estimation."),gr.Number(0.8,label="minimum confidence"),gr.Number(32,label="batch size")],gr.File(label="Midi File")),
     gr.Interface(Pop2Piano(device).predict,[gr.Audio(label="Input Audio",type="filepath"),gr.Number(1, minimum=1, maximum=21, label="Composer"),gr.Number(2,label="Details in Piano"),gr.Number(1,label="Efficiency of Piano"),gr.Radio([1,2,4],label="steps per beat",value=2)],gr.File(label="MIDI File")),
     midi_viz_ui
-],["Normal Pitch Detection","Guitar Based Pitch Detection","Melodia","Spotify Pitch Detection","Violin Based Pitch Detection","Crepe Pitch Detection","Pop2Piano","Midi Vizulizer"]).launch()
+],["Normal Pitch Detection","Guitar Based Pitch Detection","Melodia","Spotify Pitch Detection","Violin Based Pitch Detection","Crepe Pitch Detection","Crepe Pitch Detection TF","Pop2Piano","Midi Vizulizer"]).launch()
 ```

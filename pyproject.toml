@@ -1,6 +1,6 @@
 [project]
 name = "audio2midi"
-version = "0.3.0"
+version = "0.4.0"
 description = "Audio To Midi"
 readme = "README.md"
 authors = [
@@ -13,7 +13,8 @@ dependencies = []
 librosa_pitch_detector = ["librosa", "numpy","pretty_midi_fix"]
 basic_pitch_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","torch","nnAudio","huggingface_hub"]
 melodia_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","vamp","huggingface_hub"]
-crepe_pitch_detector = ["librosa", "numpy","pretty_midi_fix","hmmlearn","tensorflow","keras","huggingface_hub"]
+crepe_pitch_detector_tf = ["librosa", "numpy","pretty_midi_fix","hmmlearn","tensorflow","keras","huggingface_hub"]
+crepe_pitch_detector = ["librosa", "numpy","pretty_midi_fix","hmmlearn","tensorflow","torch","huggingface_hub","tqdm"]
 violin_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","torchaudio","torch","mir_eval","huggingface_hub"]
 pop2piano = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","resampy","pretty_midi","huggingface_hub"]
 all = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","torchaudio","torch","mir_eval","hmmlearn","tensorflow","keras","vamp","nnAudio","resampy","pretty_midi","huggingface_hub"]
