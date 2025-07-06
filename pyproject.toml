@@ -1,6 +1,6 @@
 [project]
 name = "audio2midi"
-version = "0.4.0"
+version = "0.5.0"
 description = "Audio To Midi"
 readme = "README.md"
 authors = [
@@ -17,7 +17,8 @@ crepe_pitch_detector_tf = ["librosa", "numpy","pretty_midi_fix","hmmlearn","tens
 crepe_pitch_detector = ["librosa", "numpy","pretty_midi_fix","hmmlearn","tensorflow","torch","huggingface_hub","tqdm"]
 violin_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","torchaudio","torch","mir_eval","huggingface_hub"]
 pop2piano = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","resampy","pretty_midi","huggingface_hub"]
-all = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","torchaudio","torch","mir_eval","hmmlearn","tensorflow","keras","vamp","nnAudio","resampy","pretty_midi","huggingface_hub"]
+mt3_music_transcription = ["nest_asyncio", "mt3-audio2midi"]
+all = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","torchaudio","torch","mir_eval","hmmlearn","tensorflow","keras","vamp","nnAudio","resampy","pretty_midi","huggingface_hub","nest_asyncio", "mt3-audio2midi"]
 
 [build-system]
 requires = ["hatchling"]
