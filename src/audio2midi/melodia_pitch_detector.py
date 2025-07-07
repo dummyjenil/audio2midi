@@ -49,10 +49,11 @@ class Melodia():
         data, sr = librosa_load(audio, sr=44100, mono=True)
         pm = PrettyMIDI(initial_tempo=tempo)
         instrument = Instrument(program=40)
-        seconds_per_beat = 60.0 / tempo
-        for onset_beats, duration_beats, pitch in self.midi_to_notes(self.hz2midi(np.insert(vamp_collect(data, sr, "mtg-melodia:melodia",parameters={"voicing": 0.2})['vector'][1], 0, [0]*8)), 44100, smooth, minduration,hop):
-            start = onset_beats * seconds_per_beat
-            instrument.notes.append(Note(100,int(pitch),start,start + (duration_beats * seconds_per_beat)))
+        for onset_sec, duration_sec, pitch in self.midi_to_notes(
+                self.hz2midi(np.insert(vamp_collect(data, sr, "mtg-melodia:melodia", parameters={"voicing": 0.2})['vector'][1],0, [0]*8)), 44100, smooth, minduration, hop):
+            start = onset_sec
+            end = start + duration_sec
+            instrument.notes.append(Note(100, int(pitch), start, end))
         pm.instruments.append(instrument)
         pm.write(output_file)
         return output_file

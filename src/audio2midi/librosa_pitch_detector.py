@@ -147,6 +147,6 @@ class Guitar_Pitch_Det:
                 # If it's a rest, just advance the time
                 duration_sec = duration * (60 / tempo_bpm)
                 note_time += duration_sec
-        pm.instruments.append(piano)
+        pm.instruments.append(instrument)
         pm.write(output_file)
         return output_file
