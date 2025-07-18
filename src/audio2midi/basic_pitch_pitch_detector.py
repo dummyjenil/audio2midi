@@ -778,6 +778,7 @@ class BasicPitch():
         }
         return unwrapped_output
 
-    def predict(self,audio,onset_thresh=0.5,frame_thresh=0.3,min_note_len=127.70,midi_tempo=120,infer_onsets=True,include_pitch_bends=True,multiple_pitch_bends=True,melodia_trick=True,progress_callback: Callable[[int, int], None] = None,min_freqat=None,max_freqat=None,output_file="output.mid"):
+    def predict(self,audio,onset_thresh=0.5,frame_thresh=0.3,min_note_len=11,midi_tempo=120,infer_onsets=True,include_pitch_bends=True,multiple_pitch_bends=True,melodia_trick=True,progress_callback: Callable[[int, int], None] = None,min_freqat=None,max_freqat=None,output_file="output.mid"):
+        int(np.round(min_note_len / 1000 * (AUDIO_SAMPLE_RATE / FFT_HOP)))
         model_output_to_notes(self.run_inference(audio,progress_callback),onset_thresh  = onset_thresh,frame_thresh  = frame_thresh,infer_onsets  = infer_onsets,min_note_len  = min_note_len,min_freq  = min_freqat,max_freq  = max_freqat,include_pitch_bends  = include_pitch_bends,multiple_pitch_bends  = multiple_pitch_bends,melodia_trick  = melodia_trick,midi_tempo  = midi_tempo).write(output_file)
         return output_file
