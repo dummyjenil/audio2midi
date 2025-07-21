@@ -913,7 +913,8 @@ class Crepe():
                 inputs = batch[0].to(device)
                 outputs = self.model(inputs)
                 all_outputs.append(outputs.cpu())
-                progress_callback(i,total_batch)
+                if progress_callback:
+                    progress_callback(i,total_batch)
         return torch.cat(all_outputs, dim=0)
 
     def model_predict(self,audio:np.ndarray,viterbi, center, step_size,progress_callback,batch_size):
