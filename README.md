@@ -5,7 +5,7 @@
 ---
 
 ```bash
-pip install audio2midi[all] audio2midi[pop2piano] audio2midi[violin_pitch_detector] audio2midi[crepe_pitch_detector] audio2midi[crepe_pitch_detector_tf] audio2midi[melodia_pitch_detector] audio2midi[basic_pitch_pitch_detector] audio2midi[librosa_pitch_detector] audio2midi[magenta_music_transcription]
+pip install audio2midi[all] audio2midi[pop2piano] audio2midi[violin_pitch_detector] audio2midi[crepe_pitch_detector] audio2midi[crepe_pitch_detector_tf] audio2midi[melodia_pitch_detector] audio2midi[basic_pitch_pitch_detector] audio2midi[librosa_pitch_detector] audio2midi[magenta_music_transcription] audio2midi[yourmt3_music_transcription] audio2midi[mt3_music_transcription]
 ```
 ---
 
@@ -38,9 +38,12 @@ from platform import system as platform_system , architecture as platform_archit
 
 import nest_asyncio
 from audio2midi.mt3_music_transcription import MT3
+from yourmt3_music_transcription import YMT3
 nest_asyncio.apply()
 unpack_archive(hf_hub_download("shethjenil/Audio2Midi_Models","mt3.zip"),"mt3_model",format="zip")
 MT3("mt3_model").predict(audio_path)
+name = "YMT3+"
+YMT3(hf_hub_download("shethjenil/Audio2Midi_Models",f"{name}.pt"),name,"32" if str(device) == "cpu" else "16").predict("audio.mp3")
 
 unpack_archive(hf_hub_download("shethjenil/Audio2Midi_Models",f"melodia_vamp_plugin_{'win' if (system := platform_system()) == 'Windows' else 'mac' if system == 'Darwin' else 'linux64' if (arch := platform_architecture()[0]) == '64bit' else 'linux32' if arch == '32bit' else None}.zip"),"vamp_melodia",format="zip")
 environ['VAMP_PATH'] = str(Path("vamp_melodia").absolute())
@@ -76,6 +79,7 @@ from audio2midi.melodia_pitch_detector import Melodia
 from audio2midi.pop2piano import Pop2Piano
 from audio2midi.violin_pitch_detector import Violin_Pitch_Det
 from audio2midi.mt3_music_transcription import MT3
+from yourmt3_music_transcription import YMT3
 from audio2midi.magenta_music_transcription import Magenta
 from os import environ
 from huggingface_hub import hf_hub_download
@@ -137,6 +141,7 @@ gr.TabbedInterface([
     gr.Interface(CrepeTF(getenv("crepe_model_capacity","full")).predict,[gr.Audio(type="filepath",label="Input Audio"),gr.Checkbox(False,label="viterbi",info="Apply viterbi smoothing to the estimated pitch curve"),gr.Checkbox(True,label="center"),gr.Number(10,label="step size",info="The step size in milliseconds for running pitch estimation."),gr.Number(0.8,label="minimum confidence"),gr.Number(32,label="batch size")],gr.File(label="Midi File")),
     gr.Interface(Pop2Piano(device).predict,[gr.Audio(label="Input Audio",type="filepath"),gr.Number(1, minimum=1, maximum=21, label="Composer"),gr.Number(2,label="Details in Piano"),gr.Number(1,label="Efficiency of Piano"),gr.Radio([1,2,4],label="steps per beat",value=2)],gr.File(label="MIDI File")),
     gr.Interface(MT3(str(Path("mt3_model").absolute())).predict,[gr.Audio(label="Input Audio",type="filepath"),gr.Number(0,label="seed")],gr.File(label="MIDI File")),
+    gr.Interface(YMT3(hf_hub_download("shethjenil/Audio2Midi_Models",f"{name}.pt"),name,"32" if str(device) == "cpu" else "16",device).predict,gr.gr.Audio(label="Input Audio",type="filepath"),gr.File(label="MIDI File"))
     midi_viz_ui
-],["Normal Pitch Detection","Guitar Based Pitch Detection","Melodia","Spotify Pitch Detection","Magenta Pitch Detection","Violin Based Pitch Detection","Crepe Pitch Detection","Crepe Pitch Detection TF","Pop2Piano","MT3","Midi Vizulizer"]).launch()
+],["Normal Pitch Detection","Guitar Based Pitch Detection","Melodia","Spotify Pitch Detection","Magenta Pitch Detection","Violin Based Pitch Detection","Crepe Pitch Detection","Crepe Pitch Detection TF","Pop2Piano","MT3","YourMT3","Midi Vizulizer"]).launch()
 ```

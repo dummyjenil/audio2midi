@@ -1,6 +1,6 @@
 [project]
 name = "audio2midi"
-version = "0.11.0"
+version = "0.12.0"
 description = "Audio To Midi"
 readme = "README.md"
 authors = [
@@ -19,6 +19,7 @@ violin_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","torchaudi
 pop2piano = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","resampy","pretty_midi","huggingface_hub"]
 mt3_music_transcription = ["nest_asyncio", "mt3-audio2midi"]
 magenta_music_transcription = ["librosa","numpy","pretty_midi_fix","tensorflow","huggingface_hub"]
+yourmt3_music_transcription = ['yourmt3']
 all = ["librosa", "numpy==1.26.4","pretty_midi_fix","transformers","essentia","torch","scipy","torchaudio","torch","mir_eval","hmmlearn","tensorflow","keras","vamp","nnAudio","resampy","pretty_midi","huggingface_hub","nest_asyncio", "mt3-audio2midi"]
 
 [build-system]
