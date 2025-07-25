@@ -79,7 +79,7 @@ from audio2midi.melodia_pitch_detector import Melodia
 from audio2midi.pop2piano import Pop2Piano
 from audio2midi.violin_pitch_detector import Violin_Pitch_Det
 from audio2midi.mt3_music_transcription import MT3
-from yourmt3_music_transcription import YMT3
+from audio2midi.yourmt3_music_transcription import YMT3
 from audio2midi.magenta_music_transcription import Magenta
 from os import environ
 from huggingface_hub import hf_hub_download
