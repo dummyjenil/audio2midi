@@ -867,7 +867,7 @@ class Pitch_Det(nn.Module):
 
 
 class Violin_Pitch_Det(Pitch_Det):
-    def __init__(self,model_path=None,model_capacity="full",device="cpu"):
+    def __init__(self,device="cpu",model_path=None):
         if not model_path:
             model_path = hf_hub_download("shethjenil/Audio2Midi_Models","violin.pt")
         model_conf = {
@@ -887,7 +887,7 @@ class Violin_Pitch_Det(Pitch_Det):
         "f0_smooth_std_c": 12,
         "onset_smooth_std": 0.7
         }
-        super().__init__(pathway_multiscale=model_conf['pathway_multiscale'],num_pathway_layers=model_conf['num_pathway_layers'], wiring=model_conf['wiring'],hop_length=model_conf['hop_length'], chunk_size=model_conf['chunk_size'],labeling=PerformanceLabel(note_min=model_conf['note_low'], note_max=model_conf['note_high'],f0_bins_per_semitone=model_conf['f0_bins_per_semitone'],f0_tolerance_c=200,f0_smooth_std_c=model_conf['f0_smooth_std_c'], onset_smooth_std=model_conf['onset_smooth_std']), sr=model_conf['sampling_rate'],model_capacity=model_capacity)
+        super().__init__(pathway_multiscale=model_conf['pathway_multiscale'],num_pathway_layers=model_conf['num_pathway_layers'], wiring=model_conf['wiring'],hop_length=model_conf['hop_length'], chunk_size=model_conf['chunk_size'],labeling=PerformanceLabel(note_min=model_conf['note_low'], note_max=model_conf['note_high'],f0_bins_per_semitone=model_conf['f0_bins_per_semitone'],f0_tolerance_c=200,f0_smooth_std_c=model_conf['f0_smooth_std_c'], onset_smooth_std=model_conf['onset_smooth_std']), sr=model_conf['sampling_rate'],model_capacity="full")
         self.load_state_dict(torch_load(model_path, map_location=device,weights_only=True))
         self.eval()
 
