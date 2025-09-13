@@ -47,7 +47,9 @@ def model_output_to_notes(model_output,onset_thresh,include_pitch_bends,min_note
     return midi
 
 class Magenta:
-    def __init__(self,model_path=hf_hub_download("shethjenil/Audio2Midi_Models","magenta.tflite")):
+    def __init__(self,model_path=None):
+        if not model_path:
+            model_path = hf_hub_download("shethjenil/Audio2Midi_Models","magenta.tflite")
         self.interp = tensorflow.lite.Interpreter(model_path=model_path)
         self.interp.allocate_tensors()
         self.inputLen = self.interp.get_input_details()[0]['shape'][0]

@@ -739,7 +739,9 @@ class BasicPitchTorch(nn.Module):
 
 
 class BasicPitch():
-    def __init__(self,model_path=hf_hub_download("shethjenil/Audio2Midi_Models","basicpitch/nmp.pth"),device="cpu"):
+    def __init__(self,device="cpu",model_path=None):
+        if not model_path:
+            model_path=hf_hub_download("shethjenil/Audio2Midi_Models","basicpitch/nmp.pth")
         self.model = BasicPitchTorch()
         self.model.load_state_dict(torch.load(model_path))
         self.model.to(device)

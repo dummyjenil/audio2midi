@@ -7,6 +7,11 @@ from tqdm import tqdm
 from functools import partial
 from huggingface_hub import hf_hub_download
 from scipy.stats import triang
+from hmmlearn.hmm import CategoricalHMM
+from typing import Callable
+from numpy.lib.stride_tricks import as_strided
+from pretty_midi_fix import PrettyMIDI , PitchBend , Note ,Instrument
+from torch.utils.data import DataLoader, TensorDataset
 
 ###############################################################################
 # Constants
@@ -850,12 +855,6 @@ class CrepeTorch(torch.nn.Module):
 
 
 
-from hmmlearn.hmm import CategoricalHMM
-from typing import Callable
-from numpy.lib.stride_tricks import as_strided
-from pretty_midi_fix import PrettyMIDI , PitchBend , Note ,Instrument
-from huggingface_hub import hf_hub_download
-from torch.utils.data import DataLoader, TensorDataset
 
 class Crepe():
 
