@@ -18,8 +18,9 @@ crepe_pitch_detector = ["librosa", "numpy","pretty_midi_fix","hmmlearn","tensorf
 violin_pitch_detector = ["librosa", "numpy","pretty_midi_fix","scipy","torchaudio","torch","mir_eval","huggingface_hub"]
 pop2piano = ["librosa", "numpy","transformers","essentia","torch","scipy","resampy","pretty_midi","huggingface_hub"]
 mt3_music_transcription = ["nest_asyncio", "mt3-audio2midi"]
-magenta_music_transcription = ["librosa","numpy","pretty_midi_fix","tensorflow","huggingface_hub"]
-yourmt3_music_transcription = ['yourmt3']
+magenta_music_transcription = ["librosa", "numpy","pretty_midi_fix","tensorflow","huggingface_hub"]
+yourmt3_music_transcription = ["yourmt3"]
+tf_music_transcription = ["librosa", "numpy","pretty_midi_fix","scipy","tensorflow","huggingface_hub"]
 all = ["librosa", "numpy","pretty_midi_fix","pretty_midi","transformers","essentia","torch","scipy","torchaudio","torch","mir_eval","hmmlearn","tensorflow","keras","vamp","nnAudio","resampy","pretty_midi","huggingface_hub","nest_asyncio", "mt3-audio2midi","yourmt3"]
 
 [build-system]

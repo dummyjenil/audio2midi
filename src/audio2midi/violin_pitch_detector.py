@@ -5,11 +5,11 @@ from scipy.stats import norm
 from scipy.ndimage import gaussian_filter1d
 from scipy.signal import medfilt ,argrelmax
 from torchaudio.models.conformer import ConformerLayer
-from torch import cat as torch_cat , load as torch_load , from_numpy as torch_from_numpy,no_grad as torch_no_grad ,mean as torch_mean,std as torch_std,sigmoid as torch_sigmoid,nan_to_num as torch_nan_to_num,nn
-from pretty_midi_fix import PrettyMIDI , Instrument , Note , PitchBend , instrument_name_to_program ,note_name_to_number
-from typing import Callable, Dict, List, Optional, Tuple , Literal
+from torch import nn
+from pretty_midi_fix import PrettyMIDI , Instrument , Note , PitchBend , note_name_to_number
+from typing import Callable, Dict, List, Optional, Tuple
 from huggingface_hub import hf_hub_download
-
+import torch
 from mir_eval.melody import hz2cents
 
 
@@ -823,7 +823,7 @@ class Pitch_Det(nn.Module):
         # two auditory streams followed by the separator stream to ensure timbre-awareness
         x_attendant = self.attendant(x)
         x_main = self.main(x[:, self.main_stream_crop[0]:self.main_stream_crop[1]])
-        x = self.stream_merger(torch_cat((x_attendant, x_main), -1).squeeze(1))
+        x = self.stream_merger(torch.cat((x_attendant, x_main), -1).squeeze(1))
         x = self.stream(x, 'separator', key_padding_mask)
 
         f0 = self.stream(x, 'f0', key_padding_mask) # they say this is a low level feature :)
@@ -837,27 +837,27 @@ class Pitch_Det(nn.Module):
             onset = self.stream(x, 'onset', key_padding_mask)
             offset = self.stream(x, 'offset', key_padding_mask)
             # f0 is disconnected, note relies on separator, onset, and offset
-            note = self.stream(self.triple_merger(torch_cat((x, onset, offset), -1)), 'note', key_padding_mask)
+            note = self.stream(self.triple_merger(torch.cat((x, onset, offset), -1)), 'note', key_padding_mask)
 
         elif self.wiring == 'tiktok2':
             onset = self.stream(x, 'onset', key_padding_mask)
             offset = self.stream(x, 'offset', key_padding_mask)
             # note is connected to f0, onset, and offset
-            note = self.stream(self.triple_merger(torch_cat((f0, onset, offset), -1)), 'note', key_padding_mask)
+            note = self.stream(self.triple_merger(torch.cat((f0, onset, offset), -1)), 'note', key_padding_mask)
 
         elif self.wiring == 'spotify':
             # note is connected to f0 only
             note = self.stream(f0, 'note', key_padding_mask)
             # here onset and onsets are higher-level features informed by the separator and note
-            onset = self.stream(self.double_merger(torch_cat((x, note), -1)), 'onset', key_padding_mask)
-            offset = self.stream(self.double_merger(torch_cat((x, note), -1)), 'offset', key_padding_mask)
+            onset = self.stream(self.double_merger(torch.cat((x, note), -1)), 'onset', key_padding_mask)
+            offset = self.stream(self.double_merger(torch.cat((x, note), -1)), 'offset', key_padding_mask)
 
         else:
             # onset and offset are connected to f0 and separator streams
-            onset = self.stream(self.double_merger(torch_cat((x, f0), -1)), 'onset', key_padding_mask)
-            offset = self.stream(self.double_merger(torch_cat((x, f0), -1)), 'offset', key_padding_mask)
+            onset = self.stream(self.double_merger(torch.cat((x, f0), -1)), 'onset', key_padding_mask)
+            offset = self.stream(self.double_merger(torch.cat((x, f0), -1)), 'offset', key_padding_mask)
             # note is connected to f0, onset, and offset streams
-            note = self.stream(self.triple_merger(torch_cat((f0, onset, offset), -1)), 'note', key_padding_mask)
+            note = self.stream(self.triple_merger(torch.cat((f0, onset, offset), -1)), 'note', key_padding_mask)
 
 
         return {'f0': self.head(f0, 'f0'),
@@ -888,7 +888,7 @@ class Violin_Pitch_Det(Pitch_Det):
         "onset_smooth_std": 0.7
         }
         super().__init__(pathway_multiscale=model_conf['pathway_multiscale'],num_pathway_layers=model_conf['num_pathway_layers'], wiring=model_conf['wiring'],hop_length=model_conf['hop_length'], chunk_size=model_conf['chunk_size'],labeling=PerformanceLabel(note_min=model_conf['note_low'], note_max=model_conf['note_high'],f0_bins_per_semitone=model_conf['f0_bins_per_semitone'],f0_tolerance_c=200,f0_smooth_std_c=model_conf['f0_smooth_std_c'], onset_smooth_std=model_conf['onset_smooth_std']), sr=model_conf['sampling_rate'],model_capacity="full")
-        self.load_state_dict(torch_load(model_path, map_location=device,weights_only=True))
+        self.load_state_dict(torch.load(model_path, map_location=device,weights_only=True))
         self.eval()
 
     def out2note(self, output: Dict[str, np.array], postprocessing='spotify',
@@ -1248,7 +1248,7 @@ class Violin_Pitch_Det(Pitch_Det):
         :param  audio: str, pathlib.Path
         :return: frames: (n_big_frames, frame_length), times: (n_small_frames,)
         """
-        audio = torch_from_numpy(librosa_load(audio, sr=self.sr, mono=True)[0])
+        audio = torch.from_numpy(librosa_load(audio, sr=self.sr, mono=True)[0])
         len_audio = audio.shape[-1]
         n_frames = int(np.ceil((len_audio + sum(self.frame_overlap)) / (self.hop_length * self.chunk_size)))
         audio = nn.functional.pad(audio, (self.frame_overlap[0],self.frame_overlap[1] + (n_frames * self.hop_length * self.chunk_size) - len_audio))
@@ -1260,15 +1260,15 @@ class Violin_Pitch_Det(Pitch_Det):
         device = self.main.conv0.conv2d.weight.device
         performance = {'f0': [], 'note': [], 'onset': [], 'offset': []}
         frames, times = self.read_audio(audio)
-        with torch_no_grad():
+        with torch.no_grad():
             for i in range(0, len(frames), batch_size):
                 f = frames[i:min(i + batch_size, len(frames))].to(device)
-                f -= (torch_mean(f, axis=1).unsqueeze(-1))
-                f /= (torch_std(f, axis=1).unsqueeze(-1))
+                f -= (torch.mean(f, axis=1).unsqueeze(-1))
+                f /= (torch.std(f, axis=1).unsqueeze(-1))
                 out = self.forward(f)
                 for key, value in out.items():
-                    value = torch_sigmoid(value)
-                    value = torch_nan_to_num(value) # the model outputs nan when the frame is silent (this is an expected behavior due to normalization)
+                    value = torch.sigmoid(value)
+                    value = torch.nan_to_num(value) # the model outputs nan when the frame is silent (this is an expected behavior due to normalization)
                     value = value.view(-1, value.shape[-1])
                     value = value.detach().cpu().numpy()
                     performance[key].append(value)

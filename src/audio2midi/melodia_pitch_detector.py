@@ -45,15 +45,21 @@ class Melodia():
         midi = np.round(midi)
         return midi
 
-    def predict(self,audio, tempo=120, smooth=0.25, minduration=0.1,hop=128,output_file="output.mid"):
+    def predict(self, audio, tempo=120, smooth=0.1, minduration=0.15, hop=128,voicing=0.05, output_file="output.mid"):
         data, sr = librosa_load(audio, sr=44100, mono=True)
+        melodia_data = vamp_collect(data, sr, "mtg-melodia:melodia", parameters={"voicing": voicing})
+        f0 = melodia_data['vector'][1]
+        f0[f0 <= 0] = np.nan
+        midi = np.round(self.hz2midi(f0))
         pm = PrettyMIDI(initial_tempo=tempo)
         instrument = Instrument(program=40)
-        for onset_sec, duration_sec, pitch in self.midi_to_notes(
-                self.hz2midi(np.insert(vamp_collect(data, sr, "mtg-melodia:melodia", parameters={"voicing": 0.2})['vector'][1],0, [0]*8)), 44100, smooth, minduration, hop):
-            start = onset_sec
-            end = start + duration_sec
-            instrument.notes.append(Note(100, int(pitch), start, end))
+        notes = self.midi_to_notes(midi, sr, smooth, minduration, hop)
+        for onset_sec, duration_sec, pitch in notes:
+            segment = data[int(onset_sec * sr):int((onset_sec + duration_sec) * sr)]
+            amplitude = np.abs(segment).mean()
+            velocity = int(np.clip(60 + amplitude * 400, 30, 127))
+            instrument.notes.append(Note(velocity, int(pitch), onset_sec, onset_sec + duration_sec))
+
         pm.instruments.append(instrument)
         pm.write(output_file)
         return output_file
